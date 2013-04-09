@@ -1,7 +1,7 @@
-#include "Optlib.h"
-#include "stdlib.h"
-#include "stdio.h"
-#include "string.h"
+#include "optlib.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #define OPTLIB_H 1
 
 int display_usage(void);
@@ -69,8 +69,8 @@ int getopt_c(char *arg)
 int display_usage(void)
 {
     int i = 0;
-    char *help[2] = { "-h", "-s <number>" };
-    char *help_def[2] = { "Displays usage information",
+    char *help[] = { "-h", "-s <number>" };
+    char *help_def[] = { "Displays usage information",
         "Defines sem number(1 or 2)"
     };
     printf("Usage: lab2 [options]\n");
@@ -79,21 +79,36 @@ int display_usage(void)
     return 1;
 }
 
-int get_int(int *target)
+int get_uint(FILE * stream)
 {
     char tmp = 'a';
-    char buff[10];
+    char buff[1000];
     int i = 0, output = 0;
-    fgets(buff, 8, stdin);
+    fgets(buff, 1000, stream);
     if ((tmp = buff[i]) == '\n')
-        return 0;
+        return -1;
     do {
-        if (tmp > '9')
-            return 0;
+        if (tmp > '9' || tmp < '0')
+            return -1;
         output = output * 10 + (tmp - '0');
         i++;
         tmp = buff[i];
-    } while (tmp && tmp != '\n');
-    *target = output;
-    return 1;
+    } while (tmp && tmp != '\n' && i<9);
+    return output;
+}
+
+char fgets_c(char *target, int length, FILE * source)
+{
+    int i = 0;
+    char buf[1000];
+    fgets(buf, 1000, source);
+    strncpy(target,buf,length-1);
+    target[length]='\0';
+    if (strlen(buf)>length)
+        printf("String you entered was too long, data is partially lost.\n");
+    while (target[i] != '\n' && target[i])
+        i++;
+    if (target[i] == '\n' && i)
+        target[i] = '\0';
+    return *target;
 }

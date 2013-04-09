@@ -1,12 +1,14 @@
-#include "stdlib.h"
-#include "stdio.h"
-#include "Optlib.h"
-#include "string.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "optlib.h"
+#include <string.h>
+#define NAME_LENGTH 30
 
 typedef struct students_ {
-    char name[30];
-    char surname[30];
-    char patronymic[30];
+    char name[NAME_LENGTH];
+    char surname[NAME_LENGTH];
+    char patronymic[NAME_LENGTH];
+    int sem;
 } studen_t;
 
 typedef union exams_ {
@@ -20,6 +22,7 @@ typedef struct student_exams {
 } studexam_t;
 
 const int sem_exams[][4] = { {1, 4, 5}, {1, 2, 3, 4} };
+const int sem_exams_number[2] = {3, 4};
 
 char *exam_name(int);
 int input(studexam_t *, int, int);
@@ -34,9 +37,10 @@ int main(int argc, char **argv)
         printf("There are only two sems first(1) and second(2).\n");
         return 0;
     }
-    printf("Print students number.\n");
-    while (!get_int(&students_number))
-        printf("Please print numbers.\n");
+    sem_number--;
+    printf("Print students number:\n");
+    while ((students_number=get_uint(stdin))==-1)
+        printf("Please print positive integer values.\n");
     students = (studexam_t *) calloc(students_number, sizeof(studexam_t));
     input(students, students_number, sem_number);
     output(students, students_number, sem_number);
@@ -48,29 +52,22 @@ int input(studexam_t * students, int students_number, int sem_number)
 {
     int i = 0, j = 0;
     for (i = 0; i < students_number; i++) {
-        printf("Provide student Name.\n");
-        fflush(stdin);
-        fgets(students[i].student.name, 29, stdin);
-        printf("Surname\n");
-        fflush(stdin);
-        fgets(students[i].student.surname, 29, stdin);
-        printf("Patronymic\n");
-        fflush(stdin);
-        fgets(students[i].student.patronymic, 29, stdin);
-        for (j = 0; j < sem_number + 2; j++) {
+        printf("Provide student Name:\n");
+        fgets_c(students[i].student.name, NAME_LENGTH, stdin);
+        printf("Surname:\n");
+        fgets_c(students[i].student.surname, NAME_LENGTH, stdin);
+        printf("Patronymic:\n");
+        fgets_c(students[i].student.patronymic, NAME_LENGTH, stdin);
+        for (j = 0; j < sem_exams_number[sem_number]; j++) {
             printf("Students mark for %s is\n",
-                   exam_name(sem_exams[sem_number - 1][j]));
-            fflush(stdin);
+                   exam_name(sem_exams[sem_number][j]));
             if (sem_number == 1)
-                while (!get_int(&students[i].exams.sem1[j]))
+                while ((students[i].exams.sem1[j]=get_uint(stdin))==-1)
                     printf("Please print numbers.\n");
             else
-                while (!get_int(&students[i].exams.sem2[j]))
+                while ((students[i].exams.sem2[j]=get_uint(stdin))==-1)
                     printf("Please print numbers.\n");
         }
-        *strchr(students[i].student.name, '\n') = '\0';
-        *strchr(students[i].student.patronymic, '\n') = '\0';
-        *strchr(students[i].student.surname, '\n') = '\0';
     }
     return 0;
 }
@@ -79,8 +76,6 @@ char *exam_name(int i)
 {
     char *exam_names[] =
         { "Math", "Physics", "English", "Programming", "NGiG" };
-    if (i > 6 || i < 1)
-        return 0;
     return exam_names[i - 1];
 }
 
@@ -90,12 +85,12 @@ int output(studexam_t * students, int students_number, int sem_number)
     for (i = 0; i < students_number; i++) {
         printf("%s %s %s    ", students[i].student.surname,
                students[i].student.name, students[i].student.patronymic);
-        for (j = 0; j < sem_number + 2; j++)
+        for (j = 0; j < sem_exams_number[sem_number]; j++)
             if (sem_number == 1)
-                printf(" %s:%d ", exam_name(sem_exams[sem_number - 1][j]),
+                printf(" %s:%d ", exam_name(sem_exams[sem_number][j]),
                        students[i].exams.sem1[j]);
             else
-                printf(" %s:%d ", exam_name(sem_exams[sem_number - 1][j]),
+                printf(" %s:%d ", exam_name(sem_exams[sem_number][j]),
                        students[i].exams.sem2[j]);
         printf("\n");
     }
