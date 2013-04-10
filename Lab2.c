@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     }
     sem_number--;
     printf("Print students number:\n");
-    while ((students_number=get_uint(stdin))==-1)
+    while (get_posint(&students_number,stdin)==-1)
         printf("Please print positive integer values.\n");
     students = (studexam_t *) calloc(students_number, sizeof(studexam_t));
     input(students, students_number, sem_number);
@@ -62,10 +62,10 @@ int input(studexam_t * students, int students_number, int sem_number)
             printf("Students mark for %s is\n",
                    exam_name(sem_exams[sem_number][j]));
             if (sem_number == 1)
-                while ((students[i].exams.sem1[j]=get_uint(stdin))==-1)
+                while (get_posint(&students[i].exams.sem1[j],stdin)==-1)
                     printf("Please print numbers.\n");
             else
-                while ((students[i].exams.sem2[j]=get_uint(stdin))==-1)
+                while (get_posint(&students[i].exams.sem2[j],stdin)==-1)
                     printf("Please print numbers.\n");
         }
     }

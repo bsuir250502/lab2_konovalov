@@ -79,21 +79,16 @@ int display_usage(void)
     return 1;
 }
 
-int get_uint(FILE * stream)
+int get_posint(int* target, FILE * stream)
 {
-    char tmp = 'a';
     char buff[1000];
-    int i = 0, output = 0;
-    fgets(buff, 1000, stream);
-    if ((tmp = buff[i]) == '\n')
-        return -1;
-    do {
-        if (tmp > '9' || tmp < '0')
-            return -1;
-        output = output * 10 + (tmp - '0');
-        i++;
-        tmp = buff[i];
-    } while (tmp && tmp != '\n' && i<9);
+    int output = 0;
+    char* check;
+    printf ("Maximum 9 digit number\n");
+    fgets_c(buff, 1000, stream);
+    *target=strtol(buff,&check,10);
+    if (*check!='\0' || strlen(buff)>9 || *target<0)
+        output=-1;
     return output;
 }
 
