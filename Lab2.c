@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     return (0);
 }
 
-int input(studexam_t * students, int students_number, int sem_number)
+int input(studexam_t * students, int students_number)
 {
     int i = 0, j = 0;
     for (i = 0; i < students_number; i++) {
@@ -58,10 +58,14 @@ int input(studexam_t * students, int students_number, int sem_number)
         fgets_c(students[i].student.surname, NAME_LENGTH, stdin);
         printf("Patronymic:\n");
         fgets_c(students[i].student.patronymic, NAME_LENGTH, stdin);
-        for (j = 0; j < sem_exams_number[sem_number]; j++) {
+        printf("Print sem number for student:");
+        while (get_posint(&students[i].sem,stdin)==-1)
+            if (students[i].sem!=1 && students[i].sem!=2)
+                printf("1 or 2.\n");
+        for (j = 0; j < sem_exams_number[students[i].sem]; j++) {
             printf("Students mark for %s is\n",
-                   exam_name(sem_exams[sem_number][j]));
-            if (sem_number == 1)
+                   exam_name(sem_exams[students[i].sem][j]));
+            if (students[i].sem == 1)
                 while (get_posint(&students[i].exams.sem1[j],stdin)==-1)
                     printf("Please print numbers.\n");
             else
