@@ -22,24 +22,20 @@ typedef struct student_exams {
 } studexam_t;
 
 const int sem_exams[][4] = { {1, 4, 5}, {1, 2, 3, 4} };
-const int sem_exams_number[2] = {3, 4};
+const int sem_exams_number[2] = { 3, 4 };
 
 char *exam_name(int);
 int input(studexam_t *, int);
-int output(studexam_t *, int, int);
+int output(studexam_t *, int);
 
 int main(int argc, char **argv)
 {
     int sem_number, students_number;
     studexam_t *students;
-    sem_number = options(argc, argv);
-    if (sem_number != 1 && sem_number != 2) {
-        printf("There are only two sems first(1) and second(2).\n");
+    if (!options(argc, argv))
         return 0;
-    }
-    sem_number--;
     printf("Print students number:\n");
-    while (get_posint(&students_number,stdin)==-1)
+    while (get_posint(&students_number, stdin) == -1)
         printf("Please print positive integer values.\n");
     students = (studexam_t *) calloc(students_number, sizeof(studexam_t));
     input(students, students_number);
@@ -50,7 +46,7 @@ int main(int argc, char **argv)
 
 int input(studexam_t * students, int students_number)
 {
-    int i = 0, j = 0, err=0;
+    int i = 0, j = 0, err = 0;
     for (i = 0; i < students_number; i++) {
         printf("Provide student Name:\n");
         fgets_c(students[i].student.name, NAME_LENGTH, stdin);
@@ -59,23 +55,24 @@ int input(studexam_t * students, int students_number)
         printf("Patronymic:\n");
         fgets_c(students[i].student.patronymic, NAME_LENGTH, stdin);
         printf("Print sem number for student:");
-        do{
+        do {
             printf("1 or 2.\n");
             err = 0;
-            if (get_posint(&students[i].student.sem,stdin)==-1)
-                err=1;
-            if (students[i].student.sem!=1 && students[i].student.sem!=2)
-                err=1;
+            if (get_posint(&students[i].student.sem, stdin) == -1)
+                err = 1;
+            if (students[i].student.sem != 1
+                && students[i].student.sem != 2)
+                err = 1;
         }
         while (err);
         for (j = 0; j < sem_exams_number[students[i].student.sem]; j++) {
             printf("Students mark for %s is\n",
                    exam_name(sem_exams[students[i].student.sem][j]));
             if (students[i].student.sem == 1)
-                while (get_posint(&students[i].exams.sem1[j],stdin)==-1)
+                while (get_posint(&students[i].exams.sem1[j], stdin) == -1)
                     printf("Please print numbers.\n");
             else
-                while (get_posint(&students[i].exams.sem2[j],stdin)==-1)
+                while (get_posint(&students[i].exams.sem2[j], stdin) == -1)
                     printf("Please print numbers.\n");
         }
     }
@@ -89,12 +86,13 @@ char *exam_name(int i)
     return exam_names[i - 1];
 }
 
-int output(studexam_t * students, int students_number, int sem_number)
+int output(studexam_t * students, int students_number)
 {
-    int i = 0, j = 0;
+    int i = 0, j = 0, sem_number = 0;
     for (i = 0; i < students_number; i++) {
         printf("%s %s %s    ", students[i].student.surname,
                students[i].student.name, students[i].student.patronymic);
+        sem_number = students[i].student.sem;
         for (j = 0; j < sem_exams_number[sem_number]; j++)
             if (sem_number == 1)
                 printf(" %s:%d ", exam_name(sem_exams[sem_number][j]),
